@@ -18,6 +18,7 @@ struct point3d{
    int b;
 };
 
+
 /* The following function reads a point cloud from an off file and returns the point cloud in an array of structre of point3d */
 /* The number of points is also return in N */
 /* An example to use this function:

@@ -67,13 +67,15 @@ void centerThePCL(struct point3d *points, int N){
 void Rx(double alpha, float * R){
 
   int i = 0, j = 0;
-  for(i = 0; i < 4; i++)
-    for(j = 0; j < 4; j++)
+  for(i = 0; i < 4; i++) {
+    for(j = 0; j < 4; j++) {
       R[i*4+j] = 0;
-    // 1      0     0    0
-    //   0     cosA -sinA  0
-    //   0     sinA  cosA  0
-    //   0      0     0    1
+    }
+  }
+  // 1      0     0    0
+  //   0     cosA -sinA  0
+  //   0     sinA  cosA  0
+  //   0      0     0    1
       
   R[0] = 1;
 
@@ -134,6 +136,7 @@ void Rz(float alpha, float *R){
 
   return;
 }
+
 
 void matMul(float *A, float *B, float *result){
   float tmpA[16], tmpB[16];
