@@ -81,7 +81,23 @@ int pm_getint(FILE* file) {
 /*                              functioooooooons                             */
 /*---------------------------------------------------------------------------*/
 
+struct point3d rotation(struct point3d coordinate, float gama, float beta, float sigma, float T_x, float T_y, float T_z){
+    struct point3d new_point; 
+    float coef;
+    float *result = malloc(16*sizeof(float));
+    computeTrans(gama, beta, sigma, T_x, T_y, T_z, result);
 
+    coef = result[12]*coordinate.x+result[13]*coordinate.y+result[14]*coordinate.z+result[15];
+    new_point.x = (result[0]*coordinate.x+result[1]*coordinate.y+result[2]*coordinate.z+result[3])/coef;
+    new_point.y = (result[4]*coordinate.x+result[5]*coordinate.y+result[6]*coordinate.z+result[7])/coef;
+    new_point.z = (result[8]*coordinate.x+result[9]*coordinate.y+result[10]*coordinate.z+result[11])/coef;
+    new_point.r = coordinate.r;
+    new_point.b = coordinate.b;
+    new_point.g = coordinate.g;
+    
+    return new_point;
+    
+}
 
 struct point2d perspective_projection(float f, struct point3d coordinate, float alpha, float u0, float v0){
 
@@ -105,6 +121,7 @@ int main(int argc, char* argv[]) {
     float u0 = x_size/2.0;
     float v0 = y_size/2.0;
     float alpha = 1.0/x_size;
+    struct point3d rotated_point;
 
     printf("Select the desired focal value :\n");
     scanf("%f", &f);
@@ -116,13 +133,13 @@ int main(int argc, char* argv[]) {
     color* final_map = calloc(1920 * 1080 * 3, sizeof(color));
     struct point2d point;
     for (int i = 0; i < N_v; i++) {
-        point = perspective_projection(f, points[i], alpha, u0, v0);
+        rotated_point = rotation(points[i], 0, 0, 0, 0, 0, 0);
+        point = perspective_projection(f, rotated_point, alpha, u0, v0);
         if (point.x < 0 || point.x >= x_size || point.y < 0 || point.y >= y_size) {
             continue;
         }
         int coord = (((int) point.y * 1920) + (int)(point.x)) * 3;
         final_map[coord] = point.red;
-        // printf("%d\n", final_map[coord]);
         final_map[coord + 1] = point.green;
         final_map[coord + 2] = point.blue;
     }
