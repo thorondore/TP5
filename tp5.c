@@ -99,7 +99,7 @@ struct point3d rotation(struct point3d coordinate, float gama, float beta, float
     
 }
 
-struct point2d perspective_projection(float f, struct point3d coordinate, float alpha, float u0, float v0){
+struct point2d perspective_projection(float f, struct point3d coordinate, float alpha_u, float alpha_v, float u0, float v0){
 
     struct point2d new_point;
     new_point.x = coordinate.x/(1.0+(coordinate.z/f));
@@ -108,8 +108,8 @@ struct point2d perspective_projection(float f, struct point3d coordinate, float 
     new_point.green = coordinate.g;
     new_point.blue = coordinate.b;
 
-    new_point.x = ((new_point.x)/alpha) + u0;
-    new_point.y = ((new_point.y)/alpha) + v0;
+    new_point.x = ((new_point.x)/alpha_u) + u0;
+    new_point.y = ((new_point.y)/alpha_v) + v0;
 
     return new_point;
 }
@@ -139,31 +139,31 @@ struct point2d orthogonal_projection(struct point3d coordinate, float alpha, flo
 }
 
 color *fill_holes(int index, color *final_map, struct point2d point){
-    
+
     /* If the points surrounding the pixel that is not bmaclk are blacks, we replace their color*/
 
-    if(final_map[index+3]==0 && final_map[index+4]==0 && final_map[index+5]==0){
+    if(index < x_size*y_size*3 -5 && final_map[index+3]==0 && final_map[index+4]==0 && final_map[index+5]==0){
         final_map[index+3] = point.red;
         final_map[index + 4] = point.green;
         final_map[index + 5] = point.blue;
     }
 
-    if(final_map[index-3]==0 && final_map[index-2]==0 && final_map[index-1]==0){
+    if(index>3 && final_map[index-3]==0 && final_map[index-2]==0 && final_map[index-1]==0){
         final_map[index-3] = point.red;
         final_map[index -2] = point.green;
         final_map[index -1] = point.blue;
     }
 
-    if(final_map[index+x_size*3]==0 && final_map[index+x_size*3+1]==0 && final_map[index+x_size*3+2]==0){
+    if(index < x_size*y_size*3 - x_size*3+2 && final_map[index+x_size*3]==0 && final_map[index+x_size*3+1]==0 && final_map[index+x_size*3+2]==0){
         final_map[index+x_size*3] = point.red;
         final_map[index + x_size*3+1] = point.green;
         final_map[index + x_size*3+2] = point.blue;
     }
 
-    if(final_map[index-x_size*3]==0 && final_map[index-x_size*3+1]==0 && final_map[index-x_size*3+2]==0){
+    if(index > x_size*3+2 &&final_map[index-x_size*3]==0 && final_map[index-x_size*3+1]==0 && final_map[index-x_size*3+2]){
         final_map[index-x_size*3] = point.red;
         final_map[index -x_size*3+1] = point.green;
-        final_map[index -   x_size*3+2] = point.blue;
+        final_map[index -x_size*3+2] = point.blue;
     }
         
 
@@ -177,7 +177,8 @@ int main(int argc, char* argv[]) {
 
     float u0 = x_size/2.0;
     float v0 = y_size/2.0;
-    float alpha = 4.0/x_size;
+    float alpha_u = 4.0/x_size;
+    float alpha_v = 4.0/x_size;
     struct point3d rotated_point;
     float threshold;
     int projection;
@@ -208,14 +209,16 @@ int main(int argc, char* argv[]) {
     color* final_map = calloc(x_size * y_size * 3, sizeof(color));
     struct point2d point;
     for (int i = 0; i < N_v; i++) {
+        
+        /* here you can choose to add a rotation or/and translation*/
         rotated_point = rotation(points[i], 0, 0, 0, 0, 0, 0);
         
         if (projection==1){
-            point = perspective_projection(f, rotated_point, alpha, u0, v0);
+            point = perspective_projection(f, rotated_point, alpha_u, alpha_v, u0, v0);
         }
 
         else{
-            point = orthogonal_projection(rotated_point, alpha, u0, v0, threshold, final_map);
+            point = orthogonal_projection(rotated_point, alpha_u, u0, v0, threshold, final_map);
         }
         
         if (point.x < 0 || point.x >= x_size || point.y < 0 || point.y >= y_size) {
