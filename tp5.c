@@ -211,7 +211,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < N_v; i++) {
         
         /* here you can choose to add a rotation or/and translation*/
-        rotated_point = rotation(points[i], 0, 0, 0, 0, 0, 0);
+        rotated_point = rotation(points[i], 0 , 0, 0, 0, 0, -1);
         
         if (projection==1){
             point = perspective_projection(f, rotated_point, alpha_u, alpha_v, u0, v0);
