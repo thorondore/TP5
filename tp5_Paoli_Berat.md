@@ -41,7 +41,7 @@ This is what we get for making a rotation aroud the y-axes for angles pi/2, pi, 
 <img src="test_rotation_2_4.74.png" width="300">
 <img src="test_rotation_2_6.3.png" width="300">
 
-This is what we get for making a rotation aroud the z-axes for angles pi/2, pi, 2pi/3 and 2pi.
+This is what we get for making a rotation aroud the z-axes for angles pi/2, pi, 2pi/3 and 2pi. Here all the images are pretty similar due to the fact that the z-axis is coming toward us and we project in the plane z=0.
 
 <img src="test_rotation_3_1.6.png" width="300">
 <img src="test_rotation_3_3.14.png" width="300">
