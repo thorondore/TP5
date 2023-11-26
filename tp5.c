@@ -81,7 +81,7 @@ int pm_getint(FILE* file) {
 /*                              TP5                                          */
 /*---------------------------------------------------------------------------*/
 
-struct point3d rotation(struct point3d coordinate, float gama, float beta, float sigma, float T_x, float T_y, float T_z){
+struct point3d rotation(struct point3d coordinate, float gama, float beta, float sigma, float T_x, float T_y, float T_z) {
     struct point3d new_point; 
     float coef;
     float *result = malloc(16*sizeof(float));
@@ -99,7 +99,7 @@ struct point3d rotation(struct point3d coordinate, float gama, float beta, float
     
 }
 
-struct point2d perspective_projection(float f, struct point3d coordinate, float alpha_u, float alpha_v, float u0, float v0){
+struct point2d perspective_projection(float f, struct point3d coordinate, float alpha_u, float alpha_v, float u0, float v0) {
 
     struct point2d new_point;
     new_point.x = coordinate.x/(1.0+(coordinate.z/f));
@@ -114,7 +114,7 @@ struct point2d perspective_projection(float f, struct point3d coordinate, float 
     return new_point;
 }
 
-struct point2d orthogonal_projection(struct point3d coordinate, float alpha, float u0, float v0, float threshold, color * final_map){
+struct point2d orthogonal_projection(struct point3d coordinate, float alpha, float u0, float v0, float threshold, color * final_map) {
 
     struct point2d new_point;
     new_point.x = ((coordinate.x)/alpha) + u0;
@@ -122,45 +122,42 @@ struct point2d orthogonal_projection(struct point3d coordinate, float alpha, flo
     int coord = (((int) new_point.y * x_size) + (int)(new_point.x)) * 3;
 
     /*We select the point that are the closer to us*/
-
-    if (coordinate.z > threshold){
+    if (coordinate.z > threshold) {
         new_point.red = final_map[coord+3];
         new_point.green = final_map[coord+4];
         new_point.blue = final_map[coord+5];
-    }
-
-    else{
+    } else {
         new_point.red = coordinate.r;
         new_point.green = coordinate.g;
         new_point.blue = coordinate.b;
-        }
+    }
 
     return new_point;
 }
 
-color *fill_holes(int index, color *final_map, struct point2d point){
+color *fill_holes(int index, color *final_map, struct point2d point) {
 
     /* If the points surrounding the pixel that is not bmaclk are blacks, we replace their color*/
 
-    if(index < x_size*y_size*3 -5 && final_map[index+3]==0 && final_map[index+4]==0 && final_map[index+5]==0){
+    if(index < x_size*y_size*3 -5 && final_map[index+3]==0 && final_map[index+4]==0 && final_map[index+5]==0) {
         final_map[index+3] = point.red;
         final_map[index + 4] = point.green;
         final_map[index + 5] = point.blue;
     }
 
-    if(index>3 && final_map[index-3]==0 && final_map[index-2]==0 && final_map[index-1]==0){
+    if(index>3 && final_map[index-3]==0 && final_map[index-2]==0 && final_map[index-1]==0) {
         final_map[index-3] = point.red;
         final_map[index -2] = point.green;
         final_map[index -1] = point.blue;
     }
 
-    if(index < x_size*y_size*3 - x_size*3+2 && final_map[index+x_size*3]==0 && final_map[index+x_size*3+1]==0 && final_map[index+x_size*3+2]==0){
+    if(index < x_size*y_size*3 - x_size*3+2 && final_map[index+x_size*3]==0 && final_map[index+x_size*3+1]==0 && final_map[index+x_size*3+2]==0) {
         final_map[index+x_size*3] = point.red;
         final_map[index + x_size*3+1] = point.green;
         final_map[index + x_size*3+2] = point.blue;
     }
 
-    if(index > x_size*3+2 &&final_map[index-x_size*3]==0 && final_map[index-x_size*3+1]==0 && final_map[index-x_size*3+2]){
+    if(index > x_size*3+2 &&final_map[index-x_size*3]==0 && final_map[index-x_size*3+1]==0 && final_map[index-x_size*3+2]) {
         final_map[index-x_size*3] = point.red;
         final_map[index -x_size*3+1] = point.green;
         final_map[index -x_size*3+2] = point.blue;
@@ -187,17 +184,17 @@ int main(int argc, char* argv[]) {
     printf("Select the desired projection value :\n 1 --> perspectve\n 2 --> orthogonal\n");
     scanf("%i", &projection);
 
-    if(projection!=1 && projection!=2){
+    if(projection != 1 && projection != 2) {
         printf("Unvalid value");
         exit(1);
     }
 
-    if (projection==2){
+    if (projection == 2) {
         printf("Select the desired threshold value :\n");
         scanf("%f", &threshold);
     }
 
-    if (projection==1){
+    if (projection == 1) {
         printf("Select the desired focal value :\n");
         scanf("%f", &f);
     }
@@ -213,7 +210,7 @@ int main(int argc, char* argv[]) {
         /* here you can choose to add a rotation or/and translation*/
         rotated_point = rotation(points[i], 0 , 0, 0, 0, 0, 0);
         
-        if (projection==1){
+        if (projection == 1) {
             point = perspective_projection(f, rotated_point, alpha_u, alpha_v, u0, v0);
         }
 
@@ -232,7 +229,7 @@ int main(int argc, char* argv[]) {
         final_map[coord + 2] = point.blue;
 
         /* In the case of an orthogonal projection, we fill the holes created by the projection*/
-        if (projection==2 && (final_map[coord]!=0 || final_map[coord+1]!=0 || final_map[coord+2]!=0)){
+        if (projection==2 && (final_map[coord]!=0 || final_map[coord+1]!=0 || final_map[coord+2]!=0)) {
             fill_holes(coord, final_map, point);
         }
         
